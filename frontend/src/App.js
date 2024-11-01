@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import LoginPage from './LoginPage';
 import TenantLogin from './TenantLogin';
-import AdminLogin from './AdminLogin';
 import TenantSignup from './TenantSignup';
 import TenantHome from './TenantHome';
+import AdminLogin from './AdminLogin';
 
 function App() {
     const [page, setPage] = useState('main');
@@ -27,12 +27,18 @@ function App() {
         setPage('tenantHome');
     };
 
+    const handleLogout = () => {
+        setUser(null);  // Clear user data
+        setPage('main');  // Redirect to the main login page
+    };
+
     return (
         <div>
             {page === 'main' && <LoginPage onSelectUserType={handleSelectUserType} />}
             {page === 'tenantLogin' && <TenantLogin onBack={handleBackToMain} onSignup={() => setPage('tenantSignup')} onLoginSuccess={handleLoginSuccess} />}
             {page === 'tenantSignup' && <TenantSignup onBack={() => setPage('tenantLogin')} onSignupSuccess={handleSignupSuccess} />}
-            {page === 'tenantHome' && <TenantHome user={user} />}
+            {page === 'tenantHome' && <TenantHome user={user} onLogout={handleLogout} />}
+            {page === 'adminLogin' && <AdminLogin onBack={handleBackToMain} />}
         </div>
     );
 }
