@@ -2,23 +2,29 @@ import React, { useState } from 'react';
 import LoginPage from './LoginPage';
 import TenantLogin from './TenantLogin';
 import AdminLogin from './AdminLogin';
+import TenantSignup from './TenantSignup';
 
 function App() {
-    const [userType, setUserType] = useState(null);
+    const [page, setPage] = useState('main');
 
     const handleSelectUserType = (type) => {
-        setUserType(type);
+        setPage(type === 'tenant' ? 'tenantLogin' : 'adminLogin');
     };
 
-    const handleBack = () => {
-        setUserType(null);
+    const handleBackToMain = () => {
+        setPage('main');
+    };
+
+    const handleSignup = () => {
+        setPage('tenantSignup');
     };
 
     return (
         <div>
-            {userType === 'tenant' && <TenantLogin onBack={handleBack} />}
-            {userType === 'admin' && <AdminLogin onBack={handleBack} />}
-            {!userType && <LoginPage onSelectUserType={handleSelectUserType} />}
+            {page === 'main' && <LoginPage onSelectUserType={handleSelectUserType} />}
+            {page === 'tenantLogin' && <TenantLogin onBack={handleBackToMain} onSignup={handleSignup} />}
+            {page === 'adminLogin' && <AdminLogin onBack={handleBackToMain} />}
+            {page === 'tenantSignup' && <TenantSignup onBack={() => setPage('tenantLogin')} />}
         </div>
     );
 }
