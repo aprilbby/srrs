@@ -4,36 +4,26 @@ const db = require('../config/dbConfig');
 
 // Route to handle tenant submissions
 router.post('/submit', (req, res) => {
-    const { image, location, timestamp } = req.body;
+    const { image, location, timestamp, userId } = req.body;
 
-    // Validate request data
-    if (!image || !location || !timestamp) {
-        console.error('Missing required fields:', { image, location, timestamp });
+    if (!image || !location || !timestamp || !userId) {
+        console.error('Missing required fields:', { image, location, timestamp, userId });
         return res.status(400).json({ message: 'All fields are required.' });
     }
 
     const { latitude, longitude } = location;
 
-    // Log the submission details
-    console.log('Processing submission:', {
-        image: image.slice(0, 20) + '...', // Truncated for brevity
-        latitude,
-        longitude,
-        timestamp,
-    });
-
     const sqlInsert = `
-        INSERT INTO submissions (image, latitude, longitude, timestamp, status)
-        VALUES (?, ?, ?, ?, 'pending')
+        INSERT INTO submissions (image, latitude, longitude, timestamp, status, user_id)
+        VALUES (?, ?, ?, ?, 'pending', ?)
     `;
 
-    db.query(sqlInsert, [image, latitude, longitude, timestamp], (err, results) => {
+    db.query(sqlInsert, [image, latitude, longitude, timestamp, userId], (err, results) => {
         if (err) {
             console.error('Database error saving submission:', err);
             return res.status(500).json({ message: 'Failed to save submission. Please try again.' });
         }
 
-        console.log('Submission saved successfully:', { submissionId: results.insertId });
         res.status(201).json({
             message: 'Submission saved successfully.',
             submissionId: results.insertId,
@@ -43,7 +33,12 @@ router.post('/submit', (req, res) => {
 
 // Route to fetch all submissions
 router.get('/submissions', (req, res) => {
-    const sqlSelect = 'SELECT * FROM submissions ORDER BY timestamp DESC';
+    const sqlSelect = `
+        SELECT s.id, s.image, s.latitude, s.longitude, s.timestamp, s.status, t.name AS userName
+        FROM submissions s
+        LEFT JOIN tenants t ON s.user_id = t.id
+        ORDER BY s.timestamp DESC
+    `;
 
     db.query(sqlSelect, (err, results) => {
         if (err) {
@@ -51,7 +46,6 @@ router.get('/submissions', (req, res) => {
             return res.status(500).json({ message: 'Failed to fetch submissions.' });
         }
 
-        console.log('Fetched submissions:', results.length);
         res.status(200).json(results);
     });
 });
@@ -90,6 +84,25 @@ router.patch('/submissions/:id/flag', (req, res) => {
     });
 });
 
+// Route to delete a submission
+router.delete('/submissions/:id', (req, res) => {
+    const { id } = req.params;
+
+    const sqlDelete = 'DELETE FROM submissions WHERE id = ?';
+    db.query(sqlDelete, [id], (err, results) => {
+        if (err) {
+            console.error('Error deleting submission:', err);
+            return res.status(500).json({ message: 'Failed to delete submission.' });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: 'Submission not found.' });
+        }
+        res.status(200).json({ message: 'Submission deleted successfully.' });
+    });
+});
+
 module.exports = router;
+
+
 
 
