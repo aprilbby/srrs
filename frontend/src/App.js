@@ -27,9 +27,8 @@ function App() {
         setPage('tenantHome');
     };
 
-    const handleLogout = () => {
-        setUser(null);  // Clear user data
-        setPage('main');  // Redirect to the main login page
+    const handleAdminLoginSuccess = () => {
+        setPage('adminDashboard'); // Placeholder for admin dashboard
     };
 
     return (
@@ -37,8 +36,9 @@ function App() {
             {page === 'main' && <LoginPage onSelectUserType={handleSelectUserType} />}
             {page === 'tenantLogin' && <TenantLogin onBack={handleBackToMain} onSignup={() => setPage('tenantSignup')} onLoginSuccess={handleLoginSuccess} />}
             {page === 'tenantSignup' && <TenantSignup onBack={() => setPage('tenantLogin')} onSignupSuccess={handleSignupSuccess} />}
-            {page === 'tenantHome' && <TenantHome user={user} onLogout={handleLogout} />}
-            {page === 'adminLogin' && <AdminLogin onBack={handleBackToMain} />}
+            {page === 'tenantHome' && <TenantHome user={user} />}
+            {page === 'adminLogin' && <AdminLogin onLoginSuccess={handleAdminLoginSuccess} />}
+            {page === 'adminDashboard' && <h1>Admin Dashboard (Coming Soon)</h1>}
         </div>
     );
 }
