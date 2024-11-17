@@ -4,12 +4,15 @@ const Camera = ({ onImageCaptured }) => {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const [error, setError] = useState(null);
+    const [location, setLocation] = useState({ latitude: null, longitude: null });
 
     useEffect(() => {
         // Request access to the camera
+        let stream;
         navigator.mediaDevices
             .getUserMedia({ video: { facingMode: "environment" } })
-            .then((stream) => {
+            .then((mediaStream) => {
+                stream = mediaStream;
                 if (videoRef.current) {
                     videoRef.current.srcObject = stream;
                 }
@@ -19,10 +22,28 @@ const Camera = ({ onImageCaptured }) => {
                 setError("Error accessing the camera: " + err.message);
             });
 
+        // Get the user's location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setLocation({
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                    });
+                },
+                (err) => {
+                    console.error("Error getting location:", err);
+                    setError("Error getting location: " + err.message);
+                }
+            );
+        } else {
+            setError("Geolocation is not supported by this browser.");
+        }
+
         // Clean up the stream when the component unmounts
         return () => {
-            if (videoRef.current && videoRef.current.srcObject) {
-                const tracks = videoRef.current.srcObject.getTracks();
+            if (stream) {
+                const tracks = stream.getTracks();
                 tracks.forEach((track) => track.stop());
             }
         };
@@ -43,11 +64,13 @@ const Camera = ({ onImageCaptured }) => {
 
             // Get the image data URL
             const imageDataUrl = canvas.toDataURL("image/png");
-            console.log("Captured Image Data URL:", imageDataUrl);
 
-            // Pass the captured image to the parent component
+            // Pass the captured image and location to the parent component
             if (onImageCaptured) {
-                onImageCaptured(imageDataUrl);
+                onImageCaptured({
+                    image: imageDataUrl,
+                    location,
+                });
             }
         }
     };
@@ -61,6 +84,11 @@ const Camera = ({ onImageCaptured }) => {
                 Capture
             </button>
             <canvas ref={canvasRef} style={{ display: "none" }} />
+            {location.latitude && location.longitude && (
+                <p style={styles.location}>
+                    Latitude: {location.latitude}, Longitude: {location.longitude}
+                </p>
+            )}
         </div>
     );
 };
@@ -101,6 +129,11 @@ const styles = {
         fontSize: "0.9rem",
         marginBottom: "1rem",
     },
+    location: {
+        marginTop: "1rem",
+        color: "#555",
+    },
 };
 
 export default Camera;
+
