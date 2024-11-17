@@ -26,7 +26,7 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
         height: '100vh',
-        backgroundColor: '#f8e1e7', // Baby pink background
+        backgroundColor: '#f8e1e7', 
         fontFamily: 'Arial, sans-serif',
         padding: '1rem',
     },

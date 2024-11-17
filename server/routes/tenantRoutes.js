@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/dbConfig');
 
-// Route to handle tenant submissions
 router.post('/submit', (req, res) => {
     const { image, location, timestamp, userId } = req.body;
 
@@ -31,7 +30,6 @@ router.post('/submit', (req, res) => {
     });
 });
 
-// Route to fetch all submissions
 router.get('/submissions', (req, res) => {
     const sqlSelect = `
         SELECT s.id, s.image, s.latitude, s.longitude, s.timestamp, s.status, t.name AS userName
@@ -50,7 +48,6 @@ router.get('/submissions', (req, res) => {
     });
 });
 
-// Route to verify a submission
 router.patch('/submissions/:id/verify', (req, res) => {
     const { id } = req.params;
 
@@ -67,7 +64,6 @@ router.patch('/submissions/:id/verify', (req, res) => {
     });
 });
 
-// Route to flag a submission
 router.patch('/submissions/:id/flag', (req, res) => {
     const { id } = req.params;
 
@@ -84,7 +80,6 @@ router.patch('/submissions/:id/flag', (req, res) => {
     });
 });
 
-// Route to delete a submission
 router.delete('/submissions/:id', (req, res) => {
     const { id } = req.params;
 

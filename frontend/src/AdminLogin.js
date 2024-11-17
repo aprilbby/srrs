@@ -6,9 +6,8 @@ const AdminLogin = ({ onLoginSuccess }) => {
     const [errorMessage, setErrorMessage] = useState('');
 
     const handleLogin = () => {
-        // Hardcoded credentials
         if (username === 'admin' && password === 'admin') {
-            onLoginSuccess(); // Notify parent component of successful login
+            onLoginSuccess(); 
         } else {
             setErrorMessage('Invalid username or password. Please try again.');
         }

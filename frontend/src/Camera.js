@@ -9,7 +9,6 @@ const Camera = ({ onSubmission }) => {
     const [timestamp, setTimestamp] = useState(null);
 
     useEffect(() => {
-        // Access the camera
         let stream;
         navigator.mediaDevices
             .getUserMedia({ video: { facingMode: "environment" } })
@@ -24,7 +23,6 @@ const Camera = ({ onSubmission }) => {
                 setError("Error accessing the camera: " + err.message);
             });
 
-        // Get location
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -42,7 +40,6 @@ const Camera = ({ onSubmission }) => {
             setError("Geolocation is not supported by this browser.");
         }
 
-        // Cleanup
         return () => {
             if (stream) {
                 const tracks = stream.getTracks();
@@ -65,7 +62,6 @@ const Camera = ({ onSubmission }) => {
             const imageDataUrl = canvas.toDataURL("image/png");
             setCapturedImage(imageDataUrl);
     
-            // Format timestamp as YYYY-MM-DD HH:MM:SS
             const now = new Date();
             const formattedTimestamp = now.toISOString().slice(0, 19).replace('T', ' ');
             setTimestamp(formattedTimestamp);
@@ -76,7 +72,6 @@ const Camera = ({ onSubmission }) => {
         setCapturedImage(null);
         setTimestamp(null);
     
-        // Restart camera feed
         navigator.mediaDevices
             .getUserMedia({ video: { facingMode: "environment" } })
             .then((mediaStream) => {

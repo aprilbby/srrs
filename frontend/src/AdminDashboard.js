@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 const AdminDashboard = ({ onLogout }) => {
     const [submissions, setSubmissions] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState('all'); // Filter: 'all', 'pending', 'verified', 'needs attention'
+    const [filter, setFilter] = useState('all'); 
 
     useEffect(() => {
         fetchSubmissions();
@@ -38,7 +38,7 @@ const AdminDashboard = ({ onLogout }) => {
                 return response.json();
             })
             .then(() => {
-                fetchSubmissions(); // Refresh the list after updating
+                fetchSubmissions(); 
             })
             .catch((error) => {
                 console.error('Error verifying submission:', error);
@@ -56,7 +56,7 @@ const AdminDashboard = ({ onLogout }) => {
                 return response.json();
             })
             .then(() => {
-                fetchSubmissions(); // Refresh the list after updating
+                fetchSubmissions(); 
             })
             .catch((error) => {
                 console.error('Error flagging submission:', error);
@@ -74,7 +74,7 @@ const AdminDashboard = ({ onLogout }) => {
                 return response.json();
             })
             .then(() => {
-                fetchSubmissions(); // Refresh the list after deleting
+                fetchSubmissions(); 
             })
             .catch((error) => {
                 console.error('Error deleting submission:', error);
@@ -179,13 +179,13 @@ const styles = {
     },
     submissionsContainer: { display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' },
     submissionCard: {
-        position: 'relative', // Ensure the delete button stays inside the card
+        position: 'relative', 
         padding: '1rem',
         backgroundColor: '#fff',
         borderRadius: '10px',
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
         textAlign: 'left',
-        overflow: 'hidden', // Prevent layout issues
+        overflow: 'hidden', 
     },
     image: { width: '100%', borderRadius: '10px', marginBottom: '1rem' },
     verifyButton: {

@@ -16,7 +16,7 @@ function TenantSignup({ onBack, onSignupSuccess }) {
             });
             setMessage(response.data.message);
             if (response.status === 201) {
-                onSignupSuccess({ name, email }); // Redirect to TenantHome on success
+                onSignupSuccess({ name, email }); 
             }
         } catch (error) {
             setMessage(error.response ? error.response.data.message : 'Signup failed');

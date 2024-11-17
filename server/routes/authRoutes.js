@@ -5,16 +5,14 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const db = require('../config/dbConfig');
 
-// Nodemailer setup
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'your-email@gmail.com', // Replace with your email
-        pass: 'your-app-password', // Replace with app-specific password
+        user: 'your-email@gmail.com', 
+        pass: 'your-app-password', 
     },
 });
 
-// Signup route
 router.post('/signup', async (req, res) => {
     const { name, email, password } = req.body;
 
@@ -37,7 +35,6 @@ router.post('/signup', async (req, res) => {
     }
 });
 
-// Forgot password route
 router.post('/forgot-password', (req, res) => {
     const { email } = req.body;
 
@@ -46,7 +43,7 @@ router.post('/forgot-password', (req, res) => {
     }
 
     const token = crypto.randomBytes(20).toString('hex');
-    const tokenExpiry = Date.now() + 3600000; // 1 hour
+    const tokenExpiry = Date.now() + 3600000; 
 
     const sqlUpdate = 'UPDATE tenants SET reset_token = ?, reset_token_expiry = ? WHERE email = ?';
     db.query(sqlUpdate, [token, tokenExpiry, email], (err, results) => {
@@ -75,7 +72,6 @@ router.post('/forgot-password', (req, res) => {
     });
 });
 
-// Reset password route
 router.post('/reset-password/:token', async (req, res) => {
     const { token } = req.params;
     const { password } = req.body;

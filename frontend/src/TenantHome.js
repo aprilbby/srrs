@@ -10,7 +10,6 @@ const TenantHome = ({ user, onLogout }) => {
         setSubmissionData(data);
         setIsModalOpen(true);
 
-        // Send data to the backend
         fetch('http://localhost:5000/api/submit', {
             method: 'POST',
             headers: {
