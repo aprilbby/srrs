@@ -2,29 +2,46 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/dbConfig');
 
-// Get all tenants
-router.get('/tenants', (req, res) => {
-    const sqlQuery = 'SELECT id, name, email FROM tenants';
-    db.query(sqlQuery, (err, results) => {
-        if (err) {
-            console.error("Error fetching tenants:", err);
-            return res.status(500).json({ message: 'An error occurred while retrieving tenants' });
-        }
-        res.json(results);
-    });
-});
+// Route to handle tenant submissions
+router.post('/submit', (req, res) => {
+    const { image, location, timestamp } = req.body;
 
-// Add a new tenant
-router.post('/tenants', (req, res) => {
-    const { name, email } = req.body;
-    const sqlInsert = 'INSERT INTO tenants (name, email) VALUES (?, ?)';
-    db.query(sqlInsert, [name, email], (err, results) => {
+    // Validate request data
+    if (!image || !location || !timestamp) {
+        console.error('Missing required fields:', { image, location, timestamp });
+        return res.status(400).json({ message: 'All fields are required.' });
+    }
+
+    const { latitude, longitude } = location;
+
+    // Validate location data
+    if (!latitude || !longitude) {
+        console.error('Invalid location data:', location);
+        return res.status(400).json({ message: 'Location data is incomplete.' });
+    }
+
+    // Log the submission details
+    console.log('Processing submission:', { image: image.slice(0, 20) + '...', latitude, longitude, timestamp });
+
+    const sqlInsert = `
+        INSERT INTO submissions (image, latitude, longitude, timestamp)
+        VALUES (?, ?, ?, ?)
+    `;
+
+    db.query(sqlInsert, [image, latitude, longitude, timestamp], (err, results) => {
         if (err) {
-            console.error("Error adding tenant:", err);
-            return res.status(500).json({ message: 'An error occurred while adding the tenant' });
+            console.error('Database error saving submission:', err);
+            return res.status(500).json({ message: 'Failed to save submission. Please try again.' });
         }
-        res.status(201).json({ message: 'Tenant added successfully' });
+
+        console.log('Submission saved successfully:', { submissionId: results.insertId });
+        res.status(201).json({
+            message: 'Submission saved successfully.',
+            submissionId: results.insertId,
+        });
     });
 });
 
 module.exports = router;
+
+

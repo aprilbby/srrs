@@ -71,6 +71,19 @@ const Camera = ({ onSubmission }) => {
     const handleRetake = () => {
         setCapturedImage(null);
         setTimestamp(null);
+    
+        // Restart camera feed
+        navigator.mediaDevices
+            .getUserMedia({ video: { facingMode: "environment" } })
+            .then((mediaStream) => {
+                if (videoRef.current) {
+                    videoRef.current.srcObject = mediaStream;
+                }
+            })
+            .catch((err) => {
+                console.error("Error reactivating the camera:", err);
+                setError("Error reactivating the camera: " + err.message);
+            });
     };
 
     const handleSubmit = () => {
