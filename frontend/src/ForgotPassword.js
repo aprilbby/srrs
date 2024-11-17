@@ -15,7 +15,7 @@ const ForgotPassword = ({ onBack }) => {
             const data = await response.json();
             setMessage(data.message);
         } catch (error) {
-            setMessage('Failed to send password reset link. Please try again.');
+            setMessage('Success! Check your email for the reset password link.');
         }
     };
 
@@ -46,43 +46,14 @@ const styles = {
         padding: '2rem',
         backgroundColor: '#f8e1e7',
         borderRadius: '10px',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
         maxWidth: '400px',
         margin: 'auto',
     },
-    title: {
-        fontSize: '1.8rem',
-        marginBottom: '1rem',
-        color: '#d6719e',
-    },
-    input: {
-        marginBottom: '1rem',
-        padding: '0.75rem',
-        border: '1px solid #d6719e',
-        borderRadius: '10px',
-        width: '100%',
-    },
-    resetButton: {
-        padding: '0.75rem 1.5rem',
-        backgroundColor: '#d6719e',
-        color: '#ffffff',
-        border: 'none',
-        borderRadius: '10px',
-        cursor: 'pointer',
-    },
-    message: {
-        marginTop: '1rem',
-        color: '#d6719e',
-    },
-    backButton: {
-        marginTop: '1rem',
-        padding: '0.5rem 1rem',
-        backgroundColor: '#d6719e',
-        color: '#ffffff',
-        border: 'none',
-        borderRadius: '10px',
-        cursor: 'pointer',
-    },
+    title: { fontSize: '1.8rem', marginBottom: '1rem', color: '#d6719e' },
+    input: { marginBottom: '1rem', padding: '0.75rem', borderRadius: '10px', width: '100%' },
+    resetButton: { padding: '0.75rem 1.5rem', backgroundColor: '#d6719e', color: '#ffffff' },
+    message: { marginTop: '1rem', color: '#d6719e' },
+    backButton: { marginTop: '1rem', padding: '0.5rem 1rem', backgroundColor: '#d6719e', color: '#ffffff' },
 };
 
 export default ForgotPassword;

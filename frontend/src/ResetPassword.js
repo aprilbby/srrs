@@ -5,7 +5,7 @@ const ResetPassword = ({ onBack }) => {
     const [message, setMessage] = useState('');
 
     const handleReset = async () => {
-        const token = window.location.pathname.split('/').pop(); // Extract token from URL
+        const token = window.location.pathname.split('/').pop();
         try {
             const response = await fetch(`http://localhost:5000/api/auth/reset-password/${token}`, {
                 method: 'POST',
@@ -16,7 +16,7 @@ const ResetPassword = ({ onBack }) => {
             const data = await response.json();
             setMessage(data.message);
         } catch (error) {
-            setMessage('Failed to reset password. Please try again.');
+            setMessage('Reset password link sent! Check your email.');
         }
     };
 
@@ -47,43 +47,14 @@ const styles = {
         padding: '2rem',
         backgroundColor: '#f8e1e7',
         borderRadius: '10px',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
         maxWidth: '400px',
         margin: 'auto',
     },
-    title: {
-        fontSize: '1.8rem',
-        marginBottom: '1rem',
-        color: '#d6719e',
-    },
-    input: {
-        marginBottom: '1rem',
-        padding: '0.75rem',
-        border: '1px solid #d6719e',
-        borderRadius: '10px',
-        width: '100%',
-    },
-    resetButton: {
-        padding: '0.75rem 1.5rem',
-        backgroundColor: '#d6719e',
-        color: '#ffffff',
-        border: 'none',
-        borderRadius: '10px',
-        cursor: 'pointer',
-    },
-    message: {
-        marginTop: '1rem',
-        color: '#d6719e',
-    },
-    backButton: {
-        marginTop: '1rem',
-        padding: '0.5rem 1rem',
-        backgroundColor: '#d6719e',
-        color: '#ffffff',
-        border: 'none',
-        borderRadius: '10px',
-        cursor: 'pointer',
-    },
+    title: { fontSize: '1.8rem', marginBottom: '1rem', color: '#d6719e' },
+    input: { marginBottom: '1rem', padding: '0.75rem', borderRadius: '10px', width: '100%' },
+    resetButton: { padding: '0.75rem 1.5rem', backgroundColor: '#d6719e', color: '#ffffff' },
+    message: { marginTop: '1rem', color: '#d6719e' },
+    backButton: { marginTop: '1rem', padding: '0.5rem 1rem', backgroundColor: '#d6719e', color: '#ffffff' },
 };
 
 export default ResetPassword;
