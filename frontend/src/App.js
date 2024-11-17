@@ -5,6 +5,8 @@ import TenantSignup from './TenantSignup';
 import TenantHome from './TenantHome';
 import AdminLogin from './AdminLogin';
 import AdminDashboard from './AdminDashboard';
+import ForgotPassword from './ForgotPassword';
+import ResetPassword from './ResetPassword';
 
 function App() {
     const [page, setPage] = useState('main');
@@ -40,14 +42,24 @@ function App() {
     return (
         <div>
             {page === 'main' && <LoginPage onSelectUserType={handleSelectUserType} />}
-            {page === 'tenantLogin' && <TenantLogin onBack={handleBackToMain} onSignup={() => setPage('tenantSignup')} onLoginSuccess={handleLoginSuccess} />}
+            {page === 'tenantLogin' && (
+                <TenantLogin
+                    onBack={handleBackToMain}
+                    onSignup={() => setPage('tenantSignup')}
+                    onLoginSuccess={handleLoginSuccess}
+                    onForgotPassword={() => setPage('forgotPassword')}
+                />
+            )}
             {page === 'tenantSignup' && <TenantSignup onBack={() => setPage('tenantLogin')} onSignupSuccess={handleSignupSuccess} />}
             {page === 'tenantHome' && <TenantHome user={user} onLogout={handleLogout} />}
             {page === 'adminLogin' && <AdminLogin onLoginSuccess={handleAdminLoginSuccess} />}
             {page === 'adminDashboard' && <AdminDashboard onLogout={handleLogout} />}
+            {page === 'forgotPassword' && <ForgotPassword onBack={() => setPage('tenantLogin')} />}
+            {page === 'resetPassword' && <ResetPassword onBack={() => setPage('main')} />}
         </div>
     );
 }
 
 export default App;
+
 

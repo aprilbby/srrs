@@ -23,8 +23,8 @@ router.post('/submit', (req, res) => {
     });
 
     const sqlInsert = `
-        INSERT INTO submissions (image, latitude, longitude, timestamp)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO submissions (image, latitude, longitude, timestamp, status)
+        VALUES (?, ?, ?, ?, 'pending')
     `;
 
     db.query(sqlInsert, [image, latitude, longitude, timestamp], (err, results) => {
@@ -53,6 +53,40 @@ router.get('/submissions', (req, res) => {
 
         console.log('Fetched submissions:', results.length);
         res.status(200).json(results);
+    });
+});
+
+// Route to verify a submission
+router.patch('/submissions/:id/verify', (req, res) => {
+    const { id } = req.params;
+
+    const sqlUpdate = 'UPDATE submissions SET status = ? WHERE id = ?';
+    db.query(sqlUpdate, ['verified', id], (err, results) => {
+        if (err) {
+            console.error('Error verifying submission:', err);
+            return res.status(500).json({ message: 'Failed to verify submission.' });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: 'Submission not found.' });
+        }
+        res.status(200).json({ message: 'Submission verified successfully.' });
+    });
+});
+
+// Route to flag a submission
+router.patch('/submissions/:id/flag', (req, res) => {
+    const { id } = req.params;
+
+    const sqlUpdate = 'UPDATE submissions SET status = ? WHERE id = ?';
+    db.query(sqlUpdate, ['needs attention', id], (err, results) => {
+        if (err) {
+            console.error('Error flagging submission:', err);
+            return res.status(500).json({ message: 'Failed to flag submission.' });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: 'Submission not found.' });
+        }
+        res.status(200).json({ message: 'Submission flagged successfully.' });
     });
 });
 

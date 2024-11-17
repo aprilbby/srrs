@@ -1,32 +1,27 @@
 import React, { useState } from 'react';
 
-const TenantLogin = ({ onBack, onSignup, onForgotPassword, onLoginSuccess }) => {
+const ForgotPassword = ({ onBack }) => {
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
 
-    const handleLogin = async () => {
+    const handleReset = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/auth/login', {
+            const response = await fetch('http://localhost:5000/api/auth/forgot-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ email }),
             });
 
             const data = await response.json();
-            if (response.ok) {
-                onLoginSuccess(data.user);
-            } else {
-                setMessage(data.message);
-            }
+            setMessage(data.message);
         } catch (error) {
-            setMessage('Login failed. Please try again.');
+            setMessage('Failed to send password reset link. Please try again.');
         }
     };
 
     return (
         <div style={styles.container}>
-            <h2 style={styles.title}>Tenant Login</h2>
+            <h2 style={styles.title}>Forgot Password</h2>
             <input
                 type="email"
                 placeholder="Enter your email"
@@ -34,22 +29,13 @@ const TenantLogin = ({ onBack, onSignup, onForgotPassword, onLoginSuccess }) => 
                 onChange={(e) => setEmail(e.target.value)}
                 style={styles.input}
             />
-            <input
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={styles.input}
-            />
-            <button onClick={handleLogin} style={styles.loginButton}>Login</button>
+            <button onClick={handleReset} style={styles.resetButton}>
+                Send Reset Link
+            </button>
             <p style={styles.message}>{message}</p>
-            <p style={styles.signupText}>
-                Don't have an account? <span onClick={onSignup} style={styles.link}>Sign Up</span>
-            </p>
-            <p style={styles.forgotPasswordText}>
-                <span onClick={onForgotPassword} style={styles.link}>Forgot Password?</span>
-            </p>
-            <button onClick={onBack} style={styles.backButton}>Back</button>
+            <button onClick={onBack} style={styles.backButton}>
+                Back
+            </button>
         </div>
     );
 };
@@ -76,7 +62,7 @@ const styles = {
         borderRadius: '10px',
         width: '100%',
     },
-    loginButton: {
+    resetButton: {
         padding: '0.75rem 1.5rem',
         backgroundColor: '#d6719e',
         color: '#ffffff',
@@ -87,18 +73,6 @@ const styles = {
     message: {
         marginTop: '1rem',
         color: '#d6719e',
-    },
-    signupText: {
-        marginTop: '1rem',
-    },
-    forgotPasswordText: {
-        marginTop: '1rem',
-        color: '#d6719e',
-    },
-    link: {
-        cursor: 'pointer',
-        color: '#d6719e',
-        textDecoration: 'underline',
     },
     backButton: {
         marginTop: '1rem',
@@ -111,5 +85,5 @@ const styles = {
     },
 };
 
-export default TenantLogin;
+export default ForgotPassword;
 
