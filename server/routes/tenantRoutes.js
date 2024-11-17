@@ -14,14 +14,13 @@ router.post('/submit', (req, res) => {
 
     const { latitude, longitude } = location;
 
-    // Validate location data
-    if (!latitude || !longitude) {
-        console.error('Invalid location data:', location);
-        return res.status(400).json({ message: 'Location data is incomplete.' });
-    }
-
     // Log the submission details
-    console.log('Processing submission:', { image: image.slice(0, 20) + '...', latitude, longitude, timestamp });
+    console.log('Processing submission:', {
+        image: image.slice(0, 20) + '...', // Truncated for brevity
+        latitude,
+        longitude,
+        timestamp,
+    });
 
     const sqlInsert = `
         INSERT INTO submissions (image, latitude, longitude, timestamp)
@@ -39,6 +38,21 @@ router.post('/submit', (req, res) => {
             message: 'Submission saved successfully.',
             submissionId: results.insertId,
         });
+    });
+});
+
+// Route to fetch all submissions
+router.get('/submissions', (req, res) => {
+    const sqlSelect = 'SELECT * FROM submissions ORDER BY timestamp DESC';
+
+    db.query(sqlSelect, (err, results) => {
+        if (err) {
+            console.error('Error fetching submissions:', err);
+            return res.status(500).json({ message: 'Failed to fetch submissions.' });
+        }
+
+        console.log('Fetched submissions:', results.length);
+        res.status(200).json(results);
     });
 });
 

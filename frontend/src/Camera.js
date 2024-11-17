@@ -55,19 +55,23 @@ const Camera = ({ onSubmission }) => {
         if (canvasRef.current && videoRef.current) {
             const canvas = canvasRef.current;
             const video = videoRef.current;
-
+    
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
-
+    
             const context = canvas.getContext("2d");
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
+    
             const imageDataUrl = canvas.toDataURL("image/png");
             setCapturedImage(imageDataUrl);
-            setTimestamp(new Date().toLocaleString()); // Save timestamp
+    
+            // Format timestamp as YYYY-MM-DD HH:MM:SS
+            const now = new Date();
+            const formattedTimestamp = now.toISOString().slice(0, 19).replace('T', ' ');
+            setTimestamp(formattedTimestamp);
         }
     };
-
+    
     const handleRetake = () => {
         setCapturedImage(null);
         setTimestamp(null);
