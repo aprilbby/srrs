@@ -2,25 +2,44 @@ import React, { useState } from 'react';
 import Camera from './Camera';
 
 const TenantHome = ({ user, onLogout }) => {
-    const [capturedData, setCapturedData] = useState(null);
+    const [submissionStatus, setSubmissionStatus] = useState('');
+    const [submittedData, setSubmittedData] = useState(null);
 
-    const handleImageCaptured = (data) => {
-        setCapturedData(data);
-        console.log("Captured Data:", data);
-        // You can later send `data.image` and `data.location` to the backend
+    const handleSubmission = (data) => {
+        setSubmittedData(data);
+        setSubmissionStatus('Submission successful!');
+
+        // Send data to the backend
+        fetch('http://localhost:5000/api/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then((response) => response.json())
+            .then((result) => {
+                console.log('Submission result:', result);
+            })
+            .catch((error) => {
+                console.error('Error submitting data:', error);
+                setSubmissionStatus('Submission failed. Please try again.');
+            });
     };
 
     return (
         <div style={styles.container}>
             <h1 style={styles.heading}>Welcome, {user ? user.name : "Tenant"}!</h1>
-            <button onClick={onLogout} style={styles.button}>Logout</button>
-            <Camera onImageCaptured={handleImageCaptured} />
-            {capturedData && (
-                <div style={styles.dataContainer}>
-                    <h3>Captured Data:</h3>
-                    <img src={capturedData.image} alt="Captured" style={styles.imagePreview} />
-                    <p>Latitude: {capturedData.location.latitude}</p>
-                    <p>Longitude: {capturedData.location.longitude}</p>
+            <button onClick={onLogout} style={styles.logoutButton}>Logout</button>
+            <Camera onSubmission={handleSubmission} />
+            {submissionStatus && <p style={styles.status}>{submissionStatus}</p>}
+            {submittedData && (
+                <div style={styles.submissionDetails}>
+                    <h3>Submission Details</h3>
+                    <img src={submittedData.image} alt="Submission" style={styles.imagePreview} />
+                    <p>Latitude: {submittedData.location.latitude}</p>
+                    <p>Longitude: {submittedData.location.longitude}</p>
+                    <p>Time: {submittedData.timestamp}</p>
                 </div>
             )}
         </div>
@@ -29,40 +48,38 @@ const TenantHome = ({ user, onLogout }) => {
 
 const styles = {
     container: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
         padding: "1rem",
         backgroundColor: "#f8e1e7",
         borderRadius: "15px",
-        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+        textAlign: "center",
     },
     heading: {
         fontSize: "1.8rem",
         color: "#d6719e",
-        marginBottom: "1.5rem",
+        marginBottom: "1rem",
     },
-    button: {
+    logoutButton: {
         marginBottom: "1rem",
         padding: "0.75rem 1.5rem",
         backgroundColor: "#d6719e",
         color: "#ffffff",
         border: "none",
         borderRadius: "10px",
-        fontSize: "1rem",
-        cursor: "pointer",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
     },
-    dataContainer: {
+    status: {
         marginTop: "1rem",
-        textAlign: "center",
+        color: "#333",
+    },
+    submissionDetails: {
+        marginTop: "2rem",
     },
     imagePreview: {
-        marginTop: "0.5rem",
         width: "100%",
         maxWidth: "300px",
         borderRadius: "10px",
+        marginBottom: "1rem",
     },
 };
 
 export default TenantHome;
+

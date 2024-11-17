@@ -4,6 +4,7 @@ import TenantLogin from './TenantLogin';
 import TenantSignup from './TenantSignup';
 import TenantHome from './TenantHome';
 import AdminLogin from './AdminLogin';
+import AdminDashboard from './AdminDashboard';
 
 function App() {
     const [page, setPage] = useState('main');
@@ -28,7 +29,12 @@ function App() {
     };
 
     const handleAdminLoginSuccess = () => {
-        setPage('adminDashboard'); // Placeholder for admin dashboard
+        setPage('adminDashboard');
+    };
+
+    const handleLogout = () => {
+        setPage('main');
+        setUser(null);
     };
 
     return (
@@ -36,11 +42,12 @@ function App() {
             {page === 'main' && <LoginPage onSelectUserType={handleSelectUserType} />}
             {page === 'tenantLogin' && <TenantLogin onBack={handleBackToMain} onSignup={() => setPage('tenantSignup')} onLoginSuccess={handleLoginSuccess} />}
             {page === 'tenantSignup' && <TenantSignup onBack={() => setPage('tenantLogin')} onSignupSuccess={handleSignupSuccess} />}
-            {page === 'tenantHome' && <TenantHome user={user} />}
+            {page === 'tenantHome' && <TenantHome user={user} onLogout={handleLogout} />}
             {page === 'adminLogin' && <AdminLogin onLoginSuccess={handleAdminLoginSuccess} />}
-            {page === 'adminDashboard' && <h1>Admin Dashboard (Coming Soon)</h1>}
+            {page === 'adminDashboard' && <AdminDashboard onLogout={handleLogout} />}
         </div>
     );
 }
 
 export default App;
+
