@@ -8,8 +8,8 @@ const db = require('../config/dbConfig');
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'your-email@gmail.com', 
-        pass: 'your-app-password', 
+        user: 'your-email@gmail.com',
+        pass: 'your-app-password',
     },
 });
 
@@ -35,6 +35,36 @@ router.post('/signup', async (req, res) => {
     }
 });
 
+router.post('/login', (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Please provide both email and password.' });
+    }
+
+    const sqlSelect = 'SELECT * FROM tenants WHERE email = ?';
+    db.query(sqlSelect, [email], async (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Login failed.' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        const user = results[0];
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: 'Incorrect password.' });
+        }
+
+        res.status(200).json({
+            message: 'Login successful',
+            user: { id: user.id, name: user.name, email: user.email },
+        });
+    });
+});
+
 router.post('/forgot-password', (req, res) => {
     const { email } = req.body;
 
@@ -43,7 +73,7 @@ router.post('/forgot-password', (req, res) => {
     }
 
     const token = crypto.randomBytes(20).toString('hex');
-    const tokenExpiry = Date.now() + 3600000; 
+    const tokenExpiry = Date.now() + 3600000;
 
     const sqlUpdate = 'UPDATE tenants SET reset_token = ?, reset_token_expiry = ? WHERE email = ?';
     db.query(sqlUpdate, [token, tokenExpiry, email], (err, results) => {
@@ -60,7 +90,7 @@ router.post('/forgot-password', (req, res) => {
             from: 'your-email@gmail.com',
             to: email,
             subject: 'Password Reset Request',
-            text: `You requested a password reset. Click the link below to reset your password:\n\n${resetLink}\n\nThis link is valid for 1 hour.`,
+            text: `Reset your password using this link: ${resetLink}`,
         };
 
         transporter.sendMail(mailOptions, (err) => {
@@ -68,37 +98,6 @@ router.post('/forgot-password', (req, res) => {
                 return res.status(500).json({ message: 'Failed to send reset email.' });
             }
             res.status(200).json({ message: 'Reset link sent successfully.' });
-        });
-    });
-});
-
-router.post('/reset-password/:token', async (req, res) => {
-    const { token } = req.params;
-    const { password } = req.body;
-
-    if (!password) {
-        return res.status(400).json({ message: 'Password is required.' });
-    }
-
-    const sqlSelect = 'SELECT * FROM tenants WHERE reset_token = ? AND reset_token_expiry > ?';
-    db.query(sqlSelect, [token, Date.now()], async (err, results) => {
-        if (err) {
-            return res.status(500).json({ message: 'Failed to reset password.' });
-        }
-
-        if (results.length === 0) {
-            return res.status(400).json({ message: 'Invalid or expired token.' });
-        }
-
-        const user = results[0];
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const sqlUpdate = 'UPDATE tenants SET password = ?, reset_token = NULL, reset_token_expiry = NULL WHERE id = ?';
-        db.query(sqlUpdate, [hashedPassword, user.id], (updateErr) => {
-            if (updateErr) {
-                return res.status(500).json({ message: 'Failed to reset password.' });
-            }
-            res.status(200).json({ message: 'Password reset successfully.' });
         });
     });
 });

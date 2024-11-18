@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 const AdminDashboard = ({ onLogout }) => {
     const [submissions, setSubmissions] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState('all'); 
+    const [filter, setFilter] = useState('all');
 
     useEffect(() => {
         fetchSubmissions();
@@ -28,57 +28,21 @@ const AdminDashboard = ({ onLogout }) => {
     };
 
     const handleVerify = (id) => {
-        fetch(`http://localhost:5000/api/submissions/${id}/verify`, {
-            method: 'PATCH',
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to verify submission');
-                }
-                return response.json();
-            })
-            .then(() => {
-                fetchSubmissions(); 
-            })
-            .catch((error) => {
-                console.error('Error verifying submission:', error);
-            });
+        fetch(`http://localhost:5000/api/submissions/${id}/verify`, { method: 'PATCH' })
+            .then(() => fetchSubmissions())
+            .catch((error) => console.error('Error verifying submission:', error));
     };
 
     const handleFlag = (id) => {
-        fetch(`http://localhost:5000/api/submissions/${id}/flag`, {
-            method: 'PATCH',
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to flag submission');
-                }
-                return response.json();
-            })
-            .then(() => {
-                fetchSubmissions(); 
-            })
-            .catch((error) => {
-                console.error('Error flagging submission:', error);
-            });
+        fetch(`http://localhost:5000/api/submissions/${id}/flag`, { method: 'PATCH' })
+            .then(() => fetchSubmissions())
+            .catch((error) => console.error('Error flagging submission:', error));
     };
 
     const handleDelete = (id) => {
-        fetch(`http://localhost:5000/api/submissions/${id}`, {
-            method: 'DELETE',
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to delete submission');
-                }
-                return response.json();
-            })
-            .then(() => {
-                fetchSubmissions(); 
-            })
-            .catch((error) => {
-                console.error('Error deleting submission:', error);
-            });
+        fetch(`http://localhost:5000/api/submissions/${id}`, { method: 'DELETE' })
+            .then(() => fetchSubmissions())
+            .catch((error) => console.error('Error deleting submission:', error));
     };
 
     const formatDate = (timestamp) => {
@@ -93,10 +57,9 @@ const AdminDashboard = ({ onLogout }) => {
         });
     };
 
-    const filteredSubmissions = submissions.filter((submission) => {
-        if (filter === 'all') return true;
-        return submission.status === filter;
-    });
+    const filteredSubmissions = submissions.filter((submission) =>
+        filter === 'all' ? true : submission.status === filter
+    );
 
     return (
         <div style={styles.container}>
@@ -106,16 +69,28 @@ const AdminDashboard = ({ onLogout }) => {
             </button>
 
             <div style={styles.filterContainer}>
-                <button style={styles.filterButton} onClick={() => setFilter('all')}>
+                <button
+                    style={{ ...styles.filterButton, backgroundColor: filter === 'all' ? '#c0628f' : '#d6719e' }}
+                    onClick={() => setFilter('all')}
+                >
                     All
                 </button>
-                <button style={styles.filterButton} onClick={() => setFilter('pending')}>
+                <button
+                    style={{ ...styles.filterButton, backgroundColor: filter === 'pending' ? '#c0628f' : '#d6719e' }}
+                    onClick={() => setFilter('pending')}
+                >
                     Pending
                 </button>
-                <button style={styles.filterButton} onClick={() => setFilter('needs attention')}>
+                <button
+                    style={{ ...styles.filterButton, backgroundColor: filter === 'needs attention' ? '#c0628f' : '#d6719e' }}
+                    onClick={() => setFilter('needs attention')}
+                >
                     Needs Attention
                 </button>
-                <button style={styles.filterButton} onClick={() => setFilter('verified')}>
+                <button
+                    style={{ ...styles.filterButton, backgroundColor: filter === 'verified' ? '#c0628f' : '#d6719e' }}
+                    onClick={() => setFilter('verified')}
+                >
                     Verified
                 </button>
             </div>
@@ -131,6 +106,7 @@ const AdminDashboard = ({ onLogout }) => {
                             <button
                                 onClick={() => handleDelete(submission.id)}
                                 style={styles.deleteButton}
+                                title="Delete Submission"
                             >
                                 &times;
                             </button>
@@ -140,12 +116,20 @@ const AdminDashboard = ({ onLogout }) => {
                             <p><strong>Time:</strong> {formatDate(submission.timestamp)}</p>
                             <p><strong>Status:</strong> {submission.status}</p>
                             <p><strong>Submitted by:</strong> {submission.userName || 'Unknown'}</p>
-                            <button onClick={() => handleVerify(submission.id)} style={styles.verifyButton}>
-                                Verify
-                            </button>
-                            <button onClick={() => handleFlag(submission.id)} style={styles.flagButton}>
-                                Flag as Needs Attention
-                            </button>
+                            <div style={styles.actionButtons}>
+                                <button
+                                    onClick={() => handleVerify(submission.id)}
+                                    style={styles.verifyButton}
+                                >
+                                    Verify
+                                </button>
+                                <button
+                                    onClick={() => handleFlag(submission.id)}
+                                    style={styles.flagButton}
+                                >
+                                    Flag as Needs Attention
+                                </button>
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -155,8 +139,19 @@ const AdminDashboard = ({ onLogout }) => {
 };
 
 const styles = {
-    container: { padding: '2rem', backgroundColor: '#f8e1e7', borderRadius: '15px' },
-    title: { fontSize: '2rem', color: '#d6719e', marginBottom: '1rem' },
+    container: {
+        padding: '2rem',
+        backgroundColor: '#f8e1e7',
+        borderRadius: '15px',
+        maxWidth: '1200px',
+        margin: '2rem auto',
+        textAlign: 'center',
+    },
+    title: {
+        fontSize: '2rem',
+        color: '#d6719e',
+        marginBottom: '1rem',
+    },
     logoutButton: {
         marginBottom: '1rem',
         padding: '0.75rem 1.5rem',
@@ -172,24 +167,26 @@ const styles = {
         margin: '0.5rem',
         padding: '0.5rem 1rem',
         borderRadius: '10px',
-        backgroundColor: '#d6719e',
         color: '#fff',
         border: 'none',
         cursor: 'pointer',
     },
-    submissionsContainer: { display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' },
+    submissionsContainer: {
+        display: 'grid',
+        gap: '1rem',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+    },
     submissionCard: {
-        position: 'relative', 
+        position: 'relative',
         padding: '1rem',
         backgroundColor: '#fff',
         borderRadius: '10px',
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
         textAlign: 'left',
-        overflow: 'hidden', 
     },
     image: { width: '100%', borderRadius: '10px', marginBottom: '1rem' },
+    actionButtons: { display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem' },
     verifyButton: {
-        marginRight: '0.5rem',
         padding: '0.5rem 1rem',
         backgroundColor: 'green',
         color: '#fff',
@@ -216,12 +213,12 @@ const styles = {
         width: '25px',
         height: '25px',
         fontSize: '16px',
-        textAlign: 'center',
         cursor: 'pointer',
     },
 };
 
 export default AdminDashboard;
+
 
 
 
