@@ -86,7 +86,12 @@ const Camera = ({ onSubmission }) => {
     };
 
     const handleSubmit = () => {
-        if (onSubmission && capturedImage) {
+        if (!capturedImage || !location.latitude || !location.longitude || !timestamp) {
+            alert('Please ensure all data is available before submitting.');
+            return;
+        }
+    
+        if (onSubmission) {
             onSubmission({
                 image: capturedImage,
                 location,
@@ -94,7 +99,7 @@ const Camera = ({ onSubmission }) => {
             });
         }
     };
-
+    
     return (
         <div style={styles.container}>
             <h2 style={styles.heading}>Capture Image</h2>
