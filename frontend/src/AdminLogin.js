@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const AdminLogin = ({ onLoginSuccess }) => {
+const AdminLogin = ({ onLoginSuccess, onGoBack }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -34,6 +34,9 @@ const AdminLogin = ({ onLoginSuccess }) => {
                 Login
             </button>
             {errorMessage && <p style={styles.errorMessage}>{errorMessage}</p>}
+            <button onClick={onGoBack} style={styles.backButton}>
+                Back to Main Page
+            </button>
         </div>
     );
 };
@@ -79,11 +82,25 @@ const styles = {
         cursor: 'pointer',
         transition: 'background-color 0.3s ease',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+        marginBottom: '1rem',
     },
     errorMessage: {
         marginTop: '1rem',
         color: '#d6719e',
         fontSize: '0.9rem',
+    },
+    backButton: {
+        width: '100%',
+        maxWidth: '300px',
+        padding: '0.75rem',
+        fontSize: '1rem',
+        color: '#ffffff',
+        backgroundColor: '#b06692',
+        border: 'none',
+        borderRadius: '10px',
+        cursor: 'pointer',
+        transition: 'background-color 0.3s ease',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
     },
 };
 

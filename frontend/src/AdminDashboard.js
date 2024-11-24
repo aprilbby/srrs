@@ -64,37 +64,45 @@ const AdminDashboard = ({ onLogout }) => {
     return (
         <div style={styles.container}>
             <h1 style={styles.title}>Admin Dashboard</h1>
-            <button onClick={onLogout} style={styles.logoutButton}>
-                Logout
-            </button>
-
+            <button onClick={onLogout} style={styles.logoutButton}>Logout</button>
             <div style={styles.filterContainer}>
                 <button
-                    style={{ ...styles.filterButton, backgroundColor: filter === 'all' ? '#c0628f' : '#d6719e' }}
+                    style={{
+                        ...styles.filterButton,
+                        backgroundColor: filter === 'all' ? '#c0628f' : '#d6719e',
+                    }}
                     onClick={() => setFilter('all')}
                 >
                     All
                 </button>
                 <button
-                    style={{ ...styles.filterButton, backgroundColor: filter === 'pending' ? '#c0628f' : '#d6719e' }}
+                    style={{
+                        ...styles.filterButton,
+                        backgroundColor: filter === 'pending' ? '#c0628f' : '#d6719e',
+                    }}
                     onClick={() => setFilter('pending')}
                 >
                     Pending
                 </button>
                 <button
-                    style={{ ...styles.filterButton, backgroundColor: filter === 'needs attention' ? '#c0628f' : '#d6719e' }}
+                    style={{
+                        ...styles.filterButton,
+                        backgroundColor: filter === 'needs attention' ? '#c0628f' : '#d6719e',
+                    }}
                     onClick={() => setFilter('needs attention')}
                 >
                     Needs Attention
                 </button>
                 <button
-                    style={{ ...styles.filterButton, backgroundColor: filter === 'verified' ? '#c0628f' : '#d6719e' }}
+                    style={{
+                        ...styles.filterButton,
+                        backgroundColor: filter === 'verified' ? '#c0628f' : '#d6719e',
+                    }}
                     onClick={() => setFilter('verified')}
                 >
                     Verified
                 </button>
             </div>
-
             {loading ? (
                 <p>Loading submissions...</p>
             ) : filteredSubmissions.length === 0 ? (
@@ -111,11 +119,22 @@ const AdminDashboard = ({ onLogout }) => {
                                 &times;
                             </button>
                             <img src={submission.image} alt="Submission" style={styles.image} />
-                            <p><strong>Latitude:</strong> {submission.latitude}</p>
-                            <p><strong>Longitude:</strong> {submission.longitude}</p>
-                            <p><strong>Time:</strong> {formatDate(submission.timestamp)}</p>
-                            <p><strong>Status:</strong> {submission.status}</p>
-                            <p><strong>Submitted by:</strong> {submission.userName || 'Unknown'}</p>
+                            <p>
+                                <strong>Latitude:</strong> {submission.latitude}
+                            </p>
+                            <p>
+                                <strong>Longitude:</strong> {submission.longitude}
+                            </p>
+                            <p>
+                                <strong>Time:</strong> {formatDate(submission.timestamp)}
+                            </p>
+                            <p>
+                                <strong>Status:</strong> {submission.status}
+                            </p>
+                            <p>
+                                <strong>Submitted by:</strong>{' '}
+                                {submission.userName || 'Unknown'}
+                            </p>
                             <div style={styles.actionButtons}>
                                 <button
                                     onClick={() => handleVerify(submission.id)}
@@ -218,6 +237,7 @@ const styles = {
 };
 
 export default AdminDashboard;
+
 
 
 
